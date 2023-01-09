@@ -13,7 +13,14 @@ const listContacts = async () => {
 	}
 }
 
-const getContactById = async contactId => {}
+const getContactById = async contactId => {
+	try {
+		const contacts = await listContacts()
+		return contacts.filter(({ id }) => id === contactId)
+	} catch (error) {
+		console.log(`Error: ${error.message}`.red)
+	}
+}
 
 const removeContact = async contactId => {}
 
