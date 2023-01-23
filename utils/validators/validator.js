@@ -13,4 +13,12 @@ const validator = schema => body => {
 
 const contactValidator = validator(contactSchema)
 
-module.exports = { contactValidator }
+const userSchema = joi.object({
+	name: joi.string().min(3),
+	email: joi.string().email(),
+	password: joi.string(),
+})
+
+const userValidator = validator(userSchema)
+
+module.exports = { contactValidator, userValidator }
