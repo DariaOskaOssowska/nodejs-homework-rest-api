@@ -7,10 +7,12 @@ require('dotenv').config();
 const secret = process.env.SECRET;
 
 const register = async (req, res, next) => {
+	console.log('reg');
 	const { error } = userValidator(req.body);
 	if (error) return res.status(400).json({ message: error.details[0].message });
-
+	console.log('err nie ma');
 	const { email, password, subscription } = req.body;
+	console.log('req body', req.body);
 	const user = await service.getUser({ email });
 	if (user) {
 		return res.status(409).json({
@@ -20,9 +22,12 @@ const register = async (req, res, next) => {
 			data: 'Conflict',
 		});
 	}
+	console.log('user', user);
 	try {
 		const newUser = new User({ email, password, subscription });
+		console.log('new user pre pass', newUser, subscription, email);
 		newUser.setPassword(password);
+		console.log('new user', newUser);
 		await newUser.save();
 		res.status(201).json({
 			status: 'success',
@@ -120,10 +125,34 @@ const getUsers = async (req, res, next) => {
 	});
 };
 
+const updateSubscription = async (req, res, next) => {
+	try {
+		const { error } = userValidator(req.body);
+		if (error) return res.status(400).json({ message: error.details[0].message });
+		const { subscription } = req.body;
+		const { userId } = req.params;
+
+		if (!subscription) {
+			res.status(400).json({ message: 'missing field subscription' });
+		}
+		const user = await service.updateUserSubscription(userId, subscription);
+
+		if (user) {
+			res.status(200).json(user);
+		} else {
+			res.status(404).json({ message: 'Not found' });
+		}
+	} catch (error) {
+		console.error(error.message);
+		next(error);
+	}
+};
+
 module.exports = {
 	register,
 	login,
 	logout,
 	current,
 	getUsers,
+	updateSubscription,
 };

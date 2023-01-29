@@ -2,6 +2,8 @@ const Contact = require('./schemas/contacts');
 
 const getAllContacts = async () => Contact.find();
 
+const getContactsByQbe = async qbe => Contact.find(qbe);
+
 const getContactById = async contactId => Contact.findById(contactId);
 
 const createContact = async ({ name, email, phone, favorite }) => {
@@ -18,4 +20,12 @@ const updateStatusContact = async (contactId, favorite) => {
 
 const deleteContact = async contactId => Contact.findByIdAndRemove(contactId);
 
-module.exports = { getAllContacts, getContactById, createContact, updateContact, updateStatusContact, deleteContact };
+module.exports = {
+	getAllContacts,
+	getContactsByQbe,
+	getContactById,
+	createContact,
+	updateContact,
+	updateStatusContact,
+	deleteContact,
+};
