@@ -70,11 +70,15 @@ const login = async (req, res, next) => {
 	const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 	user.setToken(token);
 	await user.save();
-	res.json({
+	res.status(200).json({
 		status: 'success',
 		code: 200,
 		data: {
 			token,
+			user: {
+				email: user.email,
+				subscription: user.subscription,
+			},
 		},
 	});
 };
@@ -153,7 +157,6 @@ const updateSubscription = async (req, res, next) => {
 	}
 };
 
-
 const updateAvatar = async (req, res, next) => {
 	if (!req.file) {
 		return res.status(400).json({ message: 'There is no file' });
@@ -175,7 +178,7 @@ const updateAvatar = async (req, res, next) => {
 		await fs.unlink(fileName);
 		return res.status(400).json({ message: 'File is not a photo or problem during resizing' });
 	}
-	
+
 	res.json({
 		description,
 		fileName,
@@ -201,6 +204,20 @@ const isCorrectResizedImage = async imagePath =>
 		}
 	});
 
+const deleteUserByMail = async (req, res) => {
+	try {
+		const email = req.query.email;
+		const userToRemove = await service.deleteUser(email);
+		if (!userToRemove) {
+			return res.status(404).json({ message: 'Not found user' });
+		} else {
+			res.status(200).json({ message: 'User deleted from data base' });
+		}
+	} catch (error) {
+		console.log(`Error: ${error.message}`.red);
+	}
+};
+
 module.exports = {
 	register,
 	login,
@@ -209,4 +226,5 @@ module.exports = {
 	getUsers,
 	updateSubscription,
 	updateAvatar,
+	deleteUserByMail,
 };
