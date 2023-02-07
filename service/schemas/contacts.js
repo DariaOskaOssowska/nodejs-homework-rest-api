@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { Schema } = mongoose
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const contactSchema = new Schema(
 	{
@@ -19,8 +19,8 @@ const contactSchema = new Schema(
 		},
 	},
 	{ versionKey: false, timestamp: true }
-)
+);
 
-const Contact = mongoose.model('Contact', contactSchema, 'contacts')
+const Contact = mongoose.model('Contact', contactSchema, 'contacts');
 
-module.exports = Contact
+module.exports = Contact;
