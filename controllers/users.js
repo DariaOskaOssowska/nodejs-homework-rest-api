@@ -38,7 +38,6 @@ const register = async (req, res, next) => {
 		await newUser.save();
 		if (verificationToken) {
 			sgMail.sendVerificationToken(email, verificationToken);
-			console.log('Sruuu leci mail');
 		}
 		res.status(201).json({
 			status: 'success',
@@ -239,6 +238,37 @@ const verifyUserByToken = async (req, res) => {
 	}
 };
 
+const resendVerificationMail = async (req, res) => {
+	const { email } = req.body;
+	if (!email) {
+		res.status(400).json({ message: 'missing required field email' });
+	}
+	const user = await service.getUser({ email });
+
+	if (!user) {
+		return res.status(400).json({
+			status: 'error',
+			code: 400,
+			message: 'Incorrect email ',
+		});
+	}
+	if (user.validate) {
+		return res.status(400).json({
+			status: 'error',
+			code: 400,
+			message: 'Verification has already been passed',
+		});
+	}
+	if (!user.validate) {
+		sgMail.sendVerificationToken(email, user.verificationToken);
+		return res.status(400).json({
+			status: 'error',
+			code: 400,
+			message: 'Verification has already been passed',
+		});
+	}
+};
+
 module.exports = {
 	register,
 	login,
@@ -249,4 +279,5 @@ module.exports = {
 	updateAvatar,
 	deleteUserByMail,
 	verifyUserByToken,
+	resendVerificationMail,
 };
