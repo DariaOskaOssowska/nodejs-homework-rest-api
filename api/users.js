@@ -8,6 +8,7 @@ router.post('/signup', userController.register);
 router.post('/login', userController.login);
 router.get('/logout', authorizeUser, userController.logout);
 router.get('/current', authorizeUser, userController.current);
+router.get('/verify/:verificationToken', userController.verifyUserByToken);
 router.patch('/:userId/subscription', authorizeUser, userController.updateSubscription);
 router.patch('/avatars', authorizeUser, uploadMiddleware.single('avatar'), userController.updateAvatar);
 router.delete("/",  userController.deleteUserByMail);
